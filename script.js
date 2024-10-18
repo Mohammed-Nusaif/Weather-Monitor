@@ -2,7 +2,7 @@ let cityInput = document.getElementById('city_input'),
 searchBtn = document.getElementById('search_btn'),
 locationBtn = document.getElementById('location-btn'),
 api_key = '31c41a794baf8828e5cd5f53232d48e4';
-currentWeatherCard = document.querySelectorAll('.weather-left, .card')[0],
+currentWeatherCard = document.querySelectorAll('.weather-left .card')[0],
 fiveDaysForecastCard = document.querySelector('.day-forecast'),
 aqiCard = document.querySelectorAll('.highlights .card')[0],
 sunriseCard = document.querySelectorAll('.highlights .card')[1],
@@ -23,7 +23,6 @@ function getWeatherDetails(name, lat, lon, country, state){
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     fetch(AIRPOLLUTION_API_URL).then(res => res.json()).then(data => {
-        // console.log(data);
         let {pm2_5, pm10, co, o3, so2, no, no2, nh3} = data.list[0].components;
         aqiCard.innerHTML = `
                 <div class="card-head">
@@ -34,35 +33,35 @@ function getWeatherDetails(name, lat, lon, country, state){
                     <i class="fa-solid fa-wind fa-3x"></i>
                     <div class="item">
                         <p>PM2.5</p>
-                        <h2>${pm2_5}</h2>
+                        <h3>${pm2_5}</h3>
                     </div>
                     <div class="item">
                         <p>PM10</p>
-                        <h2>${pm10}</h2>
+                        <h3>${pm10}</h3>
                     </div>
                     <div class="item">
                         <p>CO</p>
-                        <h2>${co}</h2>
+                        <h3>${co}</h3>
                     </div>
                     <div class="item">
                         <p>O3</p>
-                        <h2>${o3}</h2>
+                        <h3>${o3}</h3>
                     </div>
                     <div class="item">
                         <p>SO2</p>
-                        <h2>${so2}</h2>
+                        <h3>${so2}</h3>
                     </div>
                     <div class="item">
                         <p>NO</p>
-                        <h2>${no}</h2>
+                        <h3>${no}</h3>
                     </div>
                     <div class="item">
                         <p>NH3</p>
-                        <h2>${nh3}</h2>
+                        <h3>${nh3}</h3>
                     </div>
                     <div class="item">
                         <p>O3</p>
-                        <h2>${o3}</h2>
+                        <h3>${o3}</h3>
                     </div>
                 </div>
         `;
@@ -71,7 +70,6 @@ function getWeatherDetails(name, lat, lon, country, state){
         console.error('Error fetching air pollution data:', error);
         alert('failed to fetch air pollution data');
     })
-// --------------------------
     fetch(WEATHER_API_URL).then(res =>  res.json()).then(data => {
         let date = new Date();
         currentWeatherCard.innerHTML = `
@@ -87,8 +85,8 @@ function getWeatherDetails(name, lat, lon, country, state){
             </div>
             <hr>
             <div class="card-footer">
-                <p><i class="fa-solid fa-calendar"></i>${days[date.getDay()]}, ${date.getDate()}, ${months[date.getMonth()]} ${date.getFullYear()}</p>
-                <p><i class="fa-solid fa-location-dot"></i>${name}, ${country}</p>
+                <p><i class="fa-solid fa-calendar"></i> ${days[date.getDay()]}, ${date.getDate()}, ${months[date.getMonth()]} ${date.getFullYear()}</p>
+                <p><i class="fa-solid fa-location-dot"></i> ${name}, ${country}</p>
             </div>
         `;
         let {sunrise, sunset} = data.sys,
@@ -132,9 +130,7 @@ function getWeatherDetails(name, lat, lon, country, state){
         console.error('Error fetching current weather data:', error);
         alert('failed to fetch current weather ')
     });
-// ------------------------------------------------------------------
     fetch(FORCAST_API_URL).then(res => res.json()).then(data => {
-        // console.log(data);
         let hourlyForecast = data.list;
         hourlyForecastCard.innerHTML = '';
         for (i = 0; i < 7; i++){
@@ -160,7 +156,6 @@ function getWeatherDetails(name, lat, lon, country, state){
                 return uniqueForecastDays.push(forecastDate);;
             }
         });
-        // console.log(fiveDaysForecast);
         fiveDaysForecastCard.innerHTML = '';
         for(i = 0; i < fiveDaysForecast.length; i++){
             let date = new Date(fiveDaysForecast[i].dt_txt);
@@ -187,12 +182,10 @@ function getCityCoordinates() {
         alert('Please enter a city name');
         return;
     }
-    // let GEOCODING_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}`;
     let GEOCODING_API_URL = `http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=1&appid=${api_key}`;
     fetch(GEOCODING_API_URL).then(response => response.json()).then(data => {
        let {name, lat, lon, country, state} = data[0];
        getWeatherDetails(name, lat, lon, country, state);
-        // console.log(data);
     }).catch(() =>
         alert(`failed to fetch data for ${cityName}`)
     )
