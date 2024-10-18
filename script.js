@@ -1,3 +1,8 @@
+const thresholdBtn = document.getElementById('threshold-btn');
+const thresholdModal = document.getElementById('threshold-modal');
+const saveThresholdsBtn = document.getElementById('save-thresholds');
+const closeModalBtn = document.getElementById('close-modal');
+
 let cityInput = document.getElementById('city_input'),
 searchBtn = document.getElementById('search_btn'),
 locationBtn = document.getElementById('location-btn'),
@@ -14,6 +19,81 @@ windspeedVal = document.getElementById('windspeedval'),
 feelsVal = document.getElementById('feelsval'),
 aqiList = ['Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'],
 hourlyForecastCard = document.querySelector('.hourly-forecast');
+
+// Object to store threshold values
+let thresholds = {
+    temperature: { min: null, max: null },
+    humidity: { min: null, max: null },
+    windSpeed: { max: null }
+};
+// Load saved thresholds from localStorage
+function loadThresholds() {
+    const savedThresholds = localStorage.getItem('weatherThresholds');
+    if (savedThresholds) {
+        thresholds = JSON.parse(savedThresholds);
+        // Set input values
+        document.getElementById('temp-min').value = thresholds.temperature.min || '';
+        document.getElementById('temp-max').value = thresholds.temperature.max || '';
+        document.getElementById('humidity-min').value = thresholds.humidity.min || '';
+        document.getElementById('humidity-max').value = thresholds.humidity.max || '';
+        document.getElementById('wind-max').value = thresholds.windSpeed.max || '';
+    }
+}
+// Save thresholds to localStorage
+function saveThresholds() {
+    thresholds = {
+        temperature: {
+            min: parseFloat(document.getElementById('temp-min').value) || null,
+            max: parseFloat(document.getElementById('temp-max').value) || null
+        },
+        humidity: {
+            min: parseFloat(document.getElementById('humidity-min').value) || null,
+            max: parseFloat(document.getElementById('humidity-max').value) || null
+        },
+        windSpeed: {
+            max: parseFloat(document.getElementById('wind-max').value) || null
+        }
+    };
+    localStorage.setItem('weatherThresholds', JSON.stringify(thresholds));
+    thresholdModal.style.display = 'none';
+}
+// Show alert
+function showAlert(message) {
+    const alert = document.createElement('div');
+    alert.className = 'alert';
+    alert.innerHTML = `
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(alert);
+
+    // Remove alert after 5 seconds
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+// Check thresholds and trigger alerts
+function checkThresholds(weatherData) {
+    const temp = weatherData.main.temp - 273.15; // Convert to Celsius
+    const humidity = weatherData.main.humidity;
+    const windSpeed = weatherData.wind.speed;
+
+    if (thresholds.temperature.max && temp > thresholds.temperature.max) {
+        showAlert(`High Temperature Alert: Current temperature (${temp.toFixed(1)}°C) exceeds maximum threshold (${thresholds.temperature.max}°C)`);
+    }
+    if (thresholds.temperature.min && temp < thresholds.temperature.min) {
+        showAlert(`Low Temperature Alert: Current temperature (${temp.toFixed(1)}°C) is below minimum threshold (${thresholds.temperature.min}°C)`);
+    }
+    if (thresholds.humidity.max && humidity > thresholds.humidity.max) {
+        showAlert(`High Humidity Alert: Current humidity (${humidity}%) exceeds maximum threshold (${thresholds.humidity.max}%)`);
+    }
+    if (thresholds.humidity.min && humidity < thresholds.humidity.min) {
+        showAlert(`Low Humidity Alert: Current humidity (${humidity}%) is below minimum threshold (${thresholds.humidity.min}%)`);
+    }
+    if (thresholds.windSpeed.max && windSpeed > thresholds.windSpeed.max) {
+        showAlert(`High Wind Speed Alert: Current wind speed (${windSpeed}m/s) exceeds maximum threshold (${thresholds.windSpeed.max}m/s)`);
+    }
+}
 
 function getWeatherDetails(name, lat, lon, country, state){
     let FORCAST_API_URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${api_key}`,
@@ -70,6 +150,7 @@ function getWeatherDetails(name, lat, lon, country, state){
         console.error('Error fetching air pollution data:', error);
         alert('failed to fetch air pollution data');
     })
+    // Fetch current weather data
     fetch(WEATHER_API_URL).then(res =>  res.json()).then(data => {
         let date = new Date();
         currentWeatherCard.innerHTML = `
@@ -126,10 +207,13 @@ function getWeatherDetails(name, lat, lon, country, state){
         visibilityVal.innerHTML = `${visibility / 1000}km`
         windspeedVal.innerHTML = `${speed}m/s`;
         feelsVal.innerHTML = `${(feels_like - 273.15).toFixed(2)}&deg;C`;
+        // Check thresholds for alerts
+        checkThresholds(data);
     }).catch(error => {
         console.error('Error fetching current weather data:', error);
         alert('failed to fetch current weather ')
     });
+    // Fetch weather forecast data
     fetch(FORCAST_API_URL).then(res => res.json()).then(data => {
         let hourlyForecast = data.list;
         hourlyForecastCard.innerHTML = '';
@@ -174,7 +258,7 @@ function getWeatherDetails(name, lat, lon, country, state){
         
     }).catch(() => {alert('failed to fetch weather forcast data')});
 }
-
+// Function to get city coordinates based on user input
 function getCityCoordinates() {
     let cityName = cityInput.value.trim();
     cityInput.value = '';
@@ -208,3 +292,25 @@ locationBtn.addEventListener('click', () => {
 cityInput.addEventListener('keyup', e => {
     if(e.key === 'Enter') getCityCoordinates();
 });
+
+// Event listeners
+thresholdBtn.addEventListener('click', () => {
+    thresholdModal.style.display = 'block';
+    loadThresholds();
+});
+
+closeModalBtn.addEventListener('click', () => {
+    thresholdModal.style.display = 'none';
+});
+
+saveThresholdsBtn.addEventListener('click', saveThresholds);
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === thresholdModal) {
+        thresholdModal.style.display = 'none';
+    }
+});
+
+// Load thresholds when page loads
+document.addEventListener('DOMContentLoaded', loadThresholds);

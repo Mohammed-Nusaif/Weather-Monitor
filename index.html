@@ -22,6 +22,56 @@
                     <i class="fa-solid fa-location-crosshairs"></i> Current Location
                 </button>
             </div>
+            <!-- threshold-alert settings -->
+            <div class="threshold-settings">
+                <button type="button" id="threshold-btn">
+                    <i class="fa-solid fa-bell"></i> Set Alerts
+                </button>
+                <div class="threshold-modal" id="threshold-modal">
+                    <div class="modal-content">
+                        <h2>Weather Alert Settings</h2>
+                        <div class="threshold-group">
+                            <label>Temperature (°C)</label>
+                            <div class="input-group">
+                                <div>
+                                    <label>Min:</label>
+                                    <input type="number" id="temp-min" placeholder="Min °C">
+                                </div>
+                                <div>
+                                    <label>Max:</label>
+                                    <input type="number" id="temp-max" placeholder="Max °C">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threshold-group">
+                            <label>Humidity (%)</label>
+                            <div class="input-group">
+                                <div>
+                                    <label>Min:</label>
+                                    <input type="number" id="humidity-min" placeholder="Min %">
+                                </div>
+                                <div>
+                                    <label>Max:</label>
+                                    <input type="number" id="humidity-max" placeholder="Max %">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="threshold-group">
+                            <label>Wind Speed (m/s)</label>
+                            <div class="input-group">
+                                <div>
+                                    <label>Max:</label>
+                                    <input type="number" id="wind-max" placeholder="Max m/s">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button id="save-thresholds">Save</button>
+                            <button id="close-modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="weather-data">

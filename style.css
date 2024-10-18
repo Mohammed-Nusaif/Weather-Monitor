@@ -184,6 +184,116 @@ hr{
     }
 
 }
+
+/* threshold style */
+
+.threshold-settings {
+    margin-left: 10px;
+}
+
+#threshold-btn {
+    border: none;
+    font-size: 16px;
+    padding: 12px;
+    border-radius: 25px;
+    background-color: #4a90e2;
+    color: white;
+    cursor: pointer;
+}
+
+.threshold-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg-color2);
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.threshold-group {
+    margin: 15px 0;
+}
+
+.input-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.input-group input {
+    background-color: var(--bg-color1);
+    border: 1px solid #444;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+    width: 100%;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.buttons button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#save-thresholds {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#close-modal {
+    background-color: #f44336;
+    color: white;
+}
+
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f44336;
+    color: white;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+
+/* media queries */
 @media(max-width: 1100px){
     .weather-data{
         grid-template-columns: repeat(3, 1fr);
