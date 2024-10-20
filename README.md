@@ -20,7 +20,7 @@ Here’s a preview of the application:
 
 ![App Screenshot](./assets/screenshot.png)
 
-![App Screenshot](./assets/Screenshot2.png)
+![App Screenshot](./assets/Screenshot-2.png)
 
 ## Features
 
